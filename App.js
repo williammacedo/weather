@@ -6,109 +6,100 @@
  * @flow
  */
 
-import React from 'react';
+import React, {Component} from 'react';
 import {
-  SafeAreaView,
   StyleSheet,
-  ScrollView,
+  KeyboardAvoidingView,
+  ImageBackground,
   View,
   Text,
   StatusBar,
+  Platform,
 } from 'react-native';
 
-import {
-  Header,
-  LearnMoreLinks,
-  Colors,
-  DebugInstructions,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-
-const App: () => React$Node = () => {
-  return (
-    <>
-      <StatusBar barStyle="dark-content" />
-      <SafeAreaView>
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          style={styles.scrollView}>
-          <Header />
-          {global.HermesInternal == null ? null : (
-            <View style={styles.engine}>
-              <Text style={styles.footer}>Engine: Hermes</Text>
-            </View>
-          )}
-          <View style={styles.body}>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Step One</Text>
-              <Text style={styles.sectionDescription}>
-                Edit <Text style={styles.highlight}>App.js</Text> to change this
-                screen and then come back to see your edits.
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>See Your Changes</Text>
-              <Text style={styles.sectionDescription}>
-                <ReloadInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Debug</Text>
-              <Text style={styles.sectionDescription}>
-                <DebugInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Learn More</Text>
-              <Text style={styles.sectionDescription}>
-                Read the docs to discover what to do next:
-              </Text>
-            </View>
-            <LearnMoreLinks />
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-    </>
-  );
-};
+import getImageForWeather from './utils/getImageForWeather';
+import SearchInput from './components/SearchInput';
 
 const styles = StyleSheet.create({
-  scrollView: {
-    backgroundColor: Colors.lighter,
+  container: {
+    flex: 1,
+    backgroundColor: '#34495E',
   },
-  engine: {
-    position: 'absolute',
-    right: 0,
+  imageContainer: {
+    flex: 1,
   },
-  body: {
-    backgroundColor: Colors.white,
+  image: {
+    flex: 1,
+    width: null,
+    height: null,
+    resizeMode: 'cover',
   },
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+  detailsContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0,0,0,0.2)',
+    paddingHorizontal: 20,
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: Colors.black,
+  textStyle: {
+    textAlign: 'center',
+    fontFamily: Platform.OS === 'ios' ? 'AvenirNext-Regular' : 'Roboto',
+    color: '#fff',
   },
-  sectionDescription: {
-    marginTop: 8,
+  largeText: {
+    fontSize: 44,
+  },
+  smallText: {
     fontSize: 18,
-    fontWeight: '400',
-    color: Colors.dark,
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-  footer: {
-    color: Colors.dark,
-    fontSize: 12,
-    fontWeight: '600',
-    padding: 4,
-    paddingRight: 12,
-    textAlign: 'right',
   },
 });
 
-export default App;
+export default class App extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      location: '',
+    };
+  }
+
+  componentDidMount() {
+    this.handleUpdateLocation('San Francisco');
+  }
+
+  handleUpdateLocation = city => {
+    this.setState({location: city});
+  };
+
+  render = () => {
+    const {location} = this.state;
+    return (
+      <>
+        <StatusBar
+          barStyle="dark-content"
+          translucent
+          backgroundColor="transparent"
+        />
+        <KeyboardAvoidingView style={styles.container} behavior="height">
+          <ImageBackground
+            source={getImageForWeather('Clear')}
+            style={styles.imageContainer}
+            imageStyle={styles.image}>
+            <View style={styles.detailsContainer}>
+              <Text style={[styles.largeText, styles.textStyle]}>
+                {location}
+              </Text>
+              <Text style={[styles.smallText, styles.textStyle]}>
+                Light Cloud
+              </Text>
+              <Text style={[styles.largeText, styles.textStyle]}>24°</Text>
+              <SearchInput
+                placeholder="Search any city"
+                onSubmit={this.handleUpdateLocation}
+              />
+            </View>
+          </ImageBackground>
+        </KeyboardAvoidingView>
+      </>
+    );
+  };
+}
