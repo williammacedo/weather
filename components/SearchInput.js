@@ -64,6 +64,10 @@ export default class SearchInput extends Component {
 }
 
 SearchInput.propTypes = {
-  placeholder: PropTypes.string.isRequired,
+  placeholder: PropTypes.string,
   onSubmit: PropTypes.func.isRequired,
+};
+
+SearchInput.defaultProps = {
+  placeholder: '',
 };
